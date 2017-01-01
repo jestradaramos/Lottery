@@ -29,6 +29,11 @@ public class Ticket{
 		System.out.println("Price: " + this.price + "\n");
 	} 
 
+	public String report(){
+		String report = this.index + " " + this.tick_num + " " + this.price;
+		return report; 
+	}
+
 	/* Update function
 		Will update the ticket with new information
 		Return total money made afterwards 

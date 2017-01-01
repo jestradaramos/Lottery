@@ -62,11 +62,13 @@ public class Directory{
 		Scanner sc = new Scanner(System.in);
 		int total = 0;
 		int earning = 0;
+		String report = "";
 		System.out.println("Give input for each ticket as follows:");
 		System.out.println("Enter ONLY final ticket number if no new blocks were set");
 		System.out.println("Enter ONLY starting and ending ticket number if there was a new block w/ equal price");
 		System.out.println("Enter only starting,ending, and new price if there was a new block w/ new price");
-		for (int i = 0; i < this.directory.size(); i++){
+		for (int i = 0; i < this.directory.size(); i++)i{
+			// This is making the assumption that the Data file is properly formatted
 			System.out.print("Input for Ticket " + (i + 1) + ": ");
 			String input = sc.nextLine();
 			String[] info = input.split("\\s+");
@@ -76,7 +78,8 @@ public class Directory{
 				if (earning != -1){
 					total += earning;
 					System.out.println("Earnings: $" + total);
-					toHistory(directory.get(i));
+					report += directory.get(i).report() + "\n";
+					//toHistory(directory.get(i));
 				}
 				else {
 					System.out.println("Invalid Entry. Try Again.");
@@ -88,7 +91,8 @@ public class Directory{
 				if (earning != -1){
 					total += earning;
 					System.out.println("Earnings: $" + total);
-					toHistory(directory.get(i));
+					report += directory.get(i).report() + "\n";
+					//toHistory(directory.get(i));
 				}
 				else {
 					System.out.println("Invalid Entry. Try Again.");
@@ -100,7 +104,8 @@ public class Directory{
 				if (earning != -1) {
 					total += earning;
 					System.out.println("Earnings: $" + total);
-					toHistory(directory.get(i));
+					report += directory.get(i).report() + "\n";
+					//toHistory(directory.get(i));
 				}	
 				else {
 					System.out.println("Invalid Entry. Try Again.");
@@ -113,27 +118,41 @@ public class Directory{
 			}
 			
 		}
+		
+		toHistory(report);
 	}	
 
-	// Writing new file for history
+	// Writing new file for history and creating a new Data file
 	
-	private void toHistory(Ticket aTicket){
+	private void toHistory(String aReport){
 		// History files will be given the date as a name{
 		String timeStamp = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 		File history = new File("History/" + timeStamp + ".txt");
-		String report = aTicket.get_index() + " " + aTicket.get_tick() + " " + aTicket.get_price() + "\n";
+		File newData = new File("Data.txt");
+		//String report = aTicket.get_index() + " " + aTicket.get_tick() + " " + aTicket.get_price() + "\n";
 		
-		BufferedWriter bw = null;
-		FileWriter fw = null;
+		BufferedWriter hbw = null;
+		FileWriter hfw = null;
 		
-		try{
-			if  (!history.exists())
-				history.createNewFile();
+		BufferedWriter dbw = null;
+		FileWriter dfw = null;		
 
-			fw = new FileWriter(history.getAbsoluteFile(), true);
-			bw = new BufferedWriter(fw);
+
+		try{
+			if  (!history.exists()){
+				history.createNewFile();
+			}
+			newData.createNewFile();
 			
-			bw.write(report);
+			// Files will be overwritten
+			hfw = new FileWriter(history.getAbsoluteFile(), false);
+			hbw = new BufferedWriter(hfw);
+			
+			dfw = new FileWriter(newData.getAbsoluteFile(), false);
+			dbw = new BufferedWriter(dfw);			
+
+			hbw.write(aReport);
+			dbw.write(aReport);
 			System.out.println("Recorded");
 		}
 		catch (IOException e){
@@ -142,11 +161,19 @@ public class Directory{
 		finally {
 			try {
 				
-				if (bw != null)
-					bw.close();
+				if (hbw != null)
+					hbw.close();
 				
-				if (fw != null)
-					fw.close();
+				if (hfw != null)
+					hfw.close();
+				
+				if (dbw != null)
+					dbw.close();
+				
+				if (dfw != null)
+					dfw.close();
+
+
 			}
 			catch (IOException ex) {
 				ex.printStackTrace();
@@ -155,5 +182,5 @@ public class Directory{
 	
 	
 	}
-	
+
 }
